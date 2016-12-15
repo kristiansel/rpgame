@@ -1,8 +1,6 @@
-module GameState (
-    GameState,
-    initGameState,
-    evolveGameState
-) where
+module GameState ( GameState,
+                   initGameState,
+                   evolveGameState ) where
 
 import Prompt
 import Character
@@ -25,9 +23,9 @@ promptCommand = promptData "Command:" tryParseCommand "unrecognized command, c =
 
 evolveGameState :: IO GameState -> IO GameState
 evolveGameState io_gamestate = do
-    (character, num) <- io_gamestate
-    putStrLn ("Game iteration: " ++ show num)
-    command <- promptCommand
-    case command of
-        Quit -> return (character, num)
-        Continue -> evolveGameState $ return (character, num+1)
+  (character, num) <- io_gamestate
+  putStrLn ("Game iteration: " ++ show num)
+  command <- promptCommand
+  case command of
+    Quit -> return (character, num)
+    Continue -> evolveGameState $ return (character, num + 1)
