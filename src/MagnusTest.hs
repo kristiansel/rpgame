@@ -40,20 +40,20 @@ data U2 a = U2 (U (U a))
 
 
 instance Zipper U where
-  left (U l m (r:rs)) = (U (m:l) r rs)
-  right (U (l:ls) m r) = (U ls l (m:r))
+  right (U l m (r:rs)) = (U (m:l) r rs)
+  left (U (l:ls) m r) = (U ls l (m:r))
   write x (U l _ r) = U l x r
 
 instance Functor U where
   fmap f (U l m r) = U (map f l) (f m) (map f r)
 
 instance Comonad U where
-  duplicate x = move left right x
+  duplicate x = U (tail $ iterate left x) x (tail $ iterate right x)
   extract (U _ m _) = m
 
 instance Zipper U2 where
-  left (U2 u) = U2 (fmap left u)
   right (U2 u) = U2 (fmap right u)
+  left (U2 u) = U2 (fmap left u)
   write x (U2 u) = U2 (fmap (write x) u)
 
 -- maybe this belongs in the zipper typeclass
