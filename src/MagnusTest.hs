@@ -48,7 +48,7 @@ instance Functor U where
   fmap f (U l m r) = U (map f l) (f m) (map f r)
 
 instance Comonad U where
-  duplicate x = U (tail $ iterate left x) x (tail $ iterate right x)
+  duplicate x = move left right x
   extract (U _ m _) = m
 
 instance Zipper U2 where
