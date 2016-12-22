@@ -1,9 +1,13 @@
-module GameState ( GameState,
-                   initGameState,
-                   evolveGameState ) where
+module GameState
+  (
+    GameState,
+    initGameState,
+    evolveGameState
+  ) where
 
 import Prompt
 import Character
+import Control.Comonad
 import System.IO
 
 type GameState = (Character, Int)

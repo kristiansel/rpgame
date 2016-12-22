@@ -1,6 +1,9 @@
-module Character ( Character,
-                   createCharacter,
-                   tryParseChrFile ) where
+module Character
+  (
+    Character,
+    createCharacter,
+    tryParseChrFile
+  ) where
 
 import Prompt
 import System.IO

@@ -1,4 +1,7 @@
-module Prompt ( promptData ) where
+module Prompt
+  (
+    promptData
+  ) where
 
 import System.IO
 
