@@ -1,3 +1,6 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+
 module MagnusTest
   (
     U2,
@@ -10,12 +13,13 @@ import System.IO
 
 class Zipper f where
   left :: f a -> f a
-  right :: f a -> f a
+  right :: f a -> f a  
   write :: a -> f a -> f a
 
 -- magnus sin kladd
 -- U for universe
 data U a = U [a] a [a]
+data U2 a = U2 (U (U a))
 
 -- note:
 -- i imagine U to be like this
@@ -40,34 +44,12 @@ instance Zipper U where
   right (U (l:ls) m r) = (U ls l (m:r))
   write x (U l _ r) = U l x r
 
-move :: (f a -> f a) -> (f a -> f a) -> f a -> U (f a)
-move g h x = U (tail $ iterate g x) x (tail $ iterate h x)
-
 instance Functor U where
   fmap f (U l m r) = U (map f l) (f m) (map f r)
 
 instance Comonad U where
   duplicate x = move left right x
   extract (U _ m _) = m
-
--- sierpinski!
-rule :: U Bool -> Bool
-rule (U (l:_) _ (r:_)) = l /= r
-
-shift :: Int -> U a -> U a
-shift i u = (iterate (if i < 0 then left else right) u) !! abs i
-
-toList i j u = take (j - i) $ half $ shift i u where
-  half (U _ m r) = [m] ++ r
-
-test = let u = U (repeat False) True (repeat False)
-       in putStr $
-          unlines $
-          take 20 $
-          map (map (\x -> if x then '#' else ' ') . toList (-20) 20) $
-          iterate (=>> rule) u
-
-data U2 a = U2 (U (U a))
 
 instance Zipper U2 where
   left (U2 u) = U2 (fmap left u)
@@ -80,3 +62,25 @@ up (U2 u) = U2 (left u)
 
 down :: U2 a -> U2 a
 down (U2 u) = U2 (right u)
+
+move :: (f a -> f a) -> (f a -> f a) -> f a -> U (f a)
+move g h x = U (tail $ iterate g x) x (tail $ iterate h x)
+
+shift :: Int -> U a -> U a
+shift i u = (iterate (if i < 0 then left else right) u) !! abs i
+
+toList i j u = take (j - i) $ half $ shift i u where
+  half (U _ m r) = [m] ++ r
+
+-- test
+-- sierpinski!
+rule :: U Bool -> Bool
+rule (U (l:_) _ (r:_)) = l /= r
+
+test = let u = U (repeat False) True (repeat False)
+       in putStr $
+          unlines $
+          take 20 $
+          map (map (\x -> if x then '#' else ' ') . toList (-20) 20) $
+          iterate (=>> rule) u
+
